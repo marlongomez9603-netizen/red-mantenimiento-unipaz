@@ -1,0 +1,161 @@
+@import "tailwindcss";
+
+/*
+  RED · Aula Virtual de Mantenimiento Industrial — UNIPAZ
+  Concepto visual: sala de control / HMI de un CMMS (SCADA oscuro).
+  Acento ambar de seguridad sobre acero/grafito. Tipografia tecnica.
+*/
+
+@theme inline {
+  --color-base: #0a0e14;
+  --color-panel: #121823;
+  --color-panel-2: #19212e;
+  --color-line: #243040;
+  --color-line-soft: #1b2533;
+  --color-ink: #e6edf5;
+  --color-ink-dim: #9aa9bd;
+  --color-ink-faint: #5f6f84;
+
+  --color-amber: #ffb020;
+  --color-amber-deep: #e08600;
+  --color-steel: #4aa8ff;
+  --color-teal: #2dd4bf;
+  --color-alarm: #ff4d4d;
+  --color-ok: #34d399;
+
+  --font-display: var(--font-archivo);
+  --font-sans: var(--font-plex-sans);
+  --font-mono: var(--font-plex-mono);
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-base);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  /* Rejilla tecnica + halo ambar de "tablero" */
+  background-image:
+    radial-gradient(900px 500px at 85% -10%, rgba(255, 176, 32, 0.10), transparent 60%),
+    radial-gradient(700px 500px at 0% 0%, rgba(74, 168, 255, 0.07), transparent 55%),
+    linear-gradient(to right, rgba(36, 48, 64, 0.35) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(36, 48, 64, 0.35) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 46px 46px, 46px 46px;
+  background-attachment: fixed;
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+/* Etiqueta tecnica tipo HMI */
+.tag {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-ink-faint);
+}
+
+/* Panel con bisel industrial */
+.panel {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent 40%),
+    var(--color-panel);
+  border: 1px solid var(--color-line);
+  border-radius: 4px;
+}
+
+.panel-hover {
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+.panel-hover:hover {
+  border-color: rgba(255, 176, 32, 0.55);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px -16px rgba(0, 0, 0, 0.8);
+}
+
+/* Marca de esquina tipo plano tecnico */
+.corner {
+  position: relative;
+}
+.corner::before,
+.corner::after {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-color: var(--color-amber);
+  opacity: 0.7;
+}
+.corner::before {
+  top: -1px;
+  left: -1px;
+  border-top: 1px solid;
+  border-left: 1px solid;
+}
+.corner::after {
+  bottom: -1px;
+  right: -1px;
+  border-bottom: 1px solid;
+  border-right: 1px solid;
+}
+
+/* LED de estado */
+.led {
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  box-shadow: 0 0 8px currentColor;
+}
+
+@keyframes pulse-led {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+.led-live {
+  animation: pulse-led 1.8s ease-in-out infinite;
+}
+
+/* Reveal en carga */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.rise {
+  animation: rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Cinta de peligro */
+.hazard {
+  background-image: repeating-linear-gradient(
+    45deg,
+    var(--color-amber) 0 14px,
+    #0a0e14 14px 28px
+  );
+}
+
+::selection {
+  background: var(--color-amber);
+  color: #0a0e14;
+}
+
+/* Scrollbar tecnico */
+::-webkit-scrollbar { width: 11px; height: 11px; }
+::-webkit-scrollbar-track { background: var(--color-base); }
+::-webkit-scrollbar-thumb {
+  background: var(--color-line);
+  border: 2px solid var(--color-base);
+  border-radius: 0;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--color-amber-deep); }
