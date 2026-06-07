@@ -7,7 +7,7 @@ const pasos = [
   },
   {
     t: "Identificarse",
-    d: "Accede con el usuario demo de práctica (estudiante.demo). En la versión institucional, el ingreso se integra con las credenciales del campus virtual.",
+    d: "Accede con autenticación real. Hay dos roles: estudiante (opera el CMMS y guarda su trabajo) y docente (revisa el avance de cada estudiante en el panel). Para pruebas se ofrecen cuentas demo: estudiante@manten-lab.demo y docente@manten-lab.demo.",
   },
   {
     t: "Explorar el aula",
