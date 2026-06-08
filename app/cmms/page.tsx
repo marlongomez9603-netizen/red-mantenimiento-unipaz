@@ -130,16 +130,32 @@ function Activos({ uid, activos, refresh }: { uid: string; activos: Activo[]; re
         )}
       </div>
 
-      <div className="mb-4 grid gap-2 rounded-sm border border-line bg-panel-2 p-3 md:grid-cols-6">
-        <input className={inputCls} placeholder="Código" value={f.codigo} onChange={(e) => setF({ ...f, codigo: e.target.value })} />
-        <input className={`${inputCls} md:col-span-2`} placeholder="Nombre del activo" value={f.nombre} onChange={(e) => setF({ ...f, nombre: e.target.value })} />
-        <input className={inputCls} placeholder="Sistema" value={f.sistema} onChange={(e) => setF({ ...f, sistema: e.target.value })} />
-        <select className={inputCls} value={f.criticidad} onChange={(e) => setF({ ...f, criticidad: e.target.value })}>
-          {["Alta", "Media", "Baja"].map((x) => <option key={x}>{x}</option>)}
-        </select>
-        <button onClick={crear} disabled={busy} className="rounded-sm bg-amber px-3 py-2 font-mono text-xs font-semibold uppercase text-base hover:bg-amber-deep disabled:opacity-50">
-          Agregar
-        </button>
+      <Aviso actividad="A1 · Construcción de la base de datos de activos">
+        Un <strong className="text-ink">activo</strong> es cualquier equipo de la planta (bombas, motores, compresores). Registra cada uno con un código único,
+        su nombre, el sistema al que pertenece y su nivel de criticidad. Esta base es el punto de partida para programar el mantenimiento.
+      </Aviso>
+
+      <div className="mb-4 rounded-sm border border-line bg-panel-2 p-4">
+        <p className="tag mb-3 text-amber">Registrar un nuevo activo</p>
+        <div className="grid items-end gap-3 md:grid-cols-6">
+          <Campo label="Código" hint="Ej.: BBA-101">
+            <input className={inputCls} placeholder="Código único" value={f.codigo} onChange={(e) => setF({ ...f, codigo: e.target.value })} />
+          </Campo>
+          <Campo label="Nombre del activo" hint="Equipo y tipo" className="md:col-span-2">
+            <input className={inputCls} placeholder="Bomba centrífuga API 610" value={f.nombre} onChange={(e) => setF({ ...f, nombre: e.target.value })} />
+          </Campo>
+          <Campo label="Sistema" hint="Área o proceso">
+            <input className={inputCls} placeholder="Bombeo crudo" value={f.sistema} onChange={(e) => setF({ ...f, sistema: e.target.value })} />
+          </Campo>
+          <Campo label="Criticidad" hint="Impacto si falla">
+            <select className={inputCls} value={f.criticidad} onChange={(e) => setF({ ...f, criticidad: e.target.value })}>
+              {["Alta", "Media", "Baja"].map((x) => <option key={x}>{x}</option>)}
+            </select>
+          </Campo>
+          <button onClick={crear} disabled={busy} className="h-[38px] rounded-sm bg-amber px-3 font-mono text-xs font-semibold uppercase text-base hover:bg-amber-deep disabled:opacity-50">
+            Agregar
+          </button>
+        </div>
       </div>
 
       <div className="overflow-x-auto rounded-sm border border-line">
@@ -189,18 +205,30 @@ function Planes({ uid, activos, planes, refresh }: { uid: string; activos: Activ
   }
 
   return (
-    <div className="grid gap-5 lg:grid-cols-2">
+    <div>
+      <Aviso actividad="A2 · Diseño de un plan de mantenimiento preventivo">
+        Un <strong className="text-ink">plan preventivo</strong> define qué tareas se le hacen a un activo y cada cuánto, para evitar fallas.
+        Elige un activo, nómbralo, lista sus tareas y ajusta la frecuencia. El sistema te muestra cuántas órdenes y horas de trabajo generará al año.
+      </Aviso>
+      <div className="grid gap-5 lg:grid-cols-2">
       <div>
-        <p className="tag mb-3">Nuevo plan de mantenimiento preventivo</p>
-        <div className="space-y-2 rounded-sm border border-line bg-panel-2 p-4">
-          <select className={`${inputCls} w-full`} value={f.activo_codigo} onChange={(e) => setF({ ...f, activo_codigo: e.target.value })}>
-            <option value="">Selecciona un activo…</option>
-            {activos.map((a) => <option key={a.id} value={a.codigo}>{a.codigo} · {a.nombre}</option>)}
-          </select>
-          <input className={`${inputCls} w-full`} placeholder="Nombre del plan" value={f.nombre} onChange={(e) => setF({ ...f, nombre: e.target.value })} />
-          <textarea className={`${inputCls} w-full`} rows={2} placeholder="Tareas (una por línea)" value={f.tareas} onChange={(e) => setF({ ...f, tareas: e.target.value })} />
+        <p className="tag mb-3 text-amber">Nuevo plan de mantenimiento preventivo</p>
+        <div className="space-y-3 rounded-sm border border-line bg-panel-2 p-4">
+          <Campo label="Activo a intervenir" hint="Elige uno de los que registraste en A1">
+            <select className={`${inputCls} w-full`} value={f.activo_codigo} onChange={(e) => setF({ ...f, activo_codigo: e.target.value })}>
+              <option value="">Selecciona un activo…</option>
+              {activos.map((a) => <option key={a.id} value={a.codigo}>{a.codigo} · {a.nombre}</option>)}
+            </select>
+          </Campo>
+          <Campo label="Nombre del plan" hint="Ej.: Preventivo bomba API 610">
+            <input className={`${inputCls} w-full`} placeholder="Nombre del plan" value={f.nombre} onChange={(e) => setF({ ...f, nombre: e.target.value })} />
+          </Campo>
+          <Campo label="Tareas del plan" hint="Una tarea por línea (inspección, lubricación…)">
+            <textarea className={`${inputCls} w-full`} rows={2} placeholder="Inspección de sellos&#10;Análisis de vibraciones" value={f.tareas} onChange={(e) => setF({ ...f, tareas: e.target.value })} />
+          </Campo>
           <label className="flex items-center justify-between text-sm text-ink-dim">
-            Frecuencia (días) <span className="font-mono text-lg text-amber">{f.frecuencia_dias}</span>
+            <span className="tag">Frecuencia: cada cuántos días se ejecuta</span>
+            <span className="font-mono text-lg text-amber">{f.frecuencia_dias} días</span>
           </label>
           <input type="range" min={7} max={90} value={f.frecuencia_dias} onChange={(e) => setF({ ...f, frecuencia_dias: Number(e.target.value) })} className="w-full accent-amber" />
           <div className="grid grid-cols-2 gap-2 pt-1">
@@ -228,6 +256,7 @@ function Planes({ uid, activos, planes, refresh }: { uid: string; activos: Activ
           {planes.length === 0 && <p className="rounded-sm border border-line-soft bg-panel-2 p-4 text-center text-sm text-ink-faint">Aún no hay planes.</p>}
         </div>
       </div>
+      </div>
     </div>
   );
 }
@@ -250,20 +279,37 @@ function Ordenes({ uid, activos, ordenes, refresh }: { uid: string; activos: Act
   return (
     <div>
       <p className="tag mb-3">Módulo · Órdenes de trabajo · {ordenes.length}</p>
-      <div className="mb-4 grid gap-2 rounded-sm border border-line bg-panel-2 p-3 md:grid-cols-6">
-        <select className={inputCls} value={f.activo_codigo} onChange={(e) => setF({ ...f, activo_codigo: e.target.value })}>
-          <option value="">Activo…</option>
-          {activos.map((a) => <option key={a.id} value={a.codigo}>{a.codigo}</option>)}
-        </select>
-        <select className={inputCls} value={f.tipo} onChange={(e) => setF({ ...f, tipo: e.target.value })}>
-          {["Correctivo", "Preventivo", "Inspección"].map((x) => <option key={x}>{x}</option>)}
-        </select>
-        <select className={inputCls} value={f.prioridad} onChange={(e) => setF({ ...f, prioridad: e.target.value })}>
-          {["Urgente", "Alta", "Media", "Baja"].map((x) => <option key={x}>{x}</option>)}
-        </select>
-        <input className={inputCls} placeholder="Técnico" value={f.tecnico} onChange={(e) => setF({ ...f, tecnico: e.target.value })} />
-        <input className={inputCls} type="number" min={0} step={0.5} placeholder="Horas" value={f.horas} onChange={(e) => setF({ ...f, horas: Number(e.target.value) })} />
-        <button onClick={crear} disabled={busy} className="rounded-sm bg-amber px-3 py-2 font-mono text-xs font-semibold uppercase text-base hover:bg-amber-deep disabled:opacity-50">Abrir OT</button>
+      <Aviso actividad="A3 · Gestión de órdenes de trabajo e indicadores">
+        Una <strong className="text-ink">orden de trabajo (OT)</strong> es la instrucción para intervenir un activo. Ábrela indicando el activo, el tipo de trabajo,
+        su prioridad, el técnico responsable y las horas. Luego cambia su estado hasta cerrarla; con esos datos el sistema calcula los indicadores.
+      </Aviso>
+      <div className="mb-4 rounded-sm border border-line bg-panel-2 p-4">
+        <p className="tag mb-3 text-amber">Abrir una nueva orden de trabajo</p>
+        <div className="grid items-end gap-3 md:grid-cols-6">
+          <Campo label="Activo" hint="¿Qué equipo se interviene?">
+            <select className={inputCls} value={f.activo_codigo} onChange={(e) => setF({ ...f, activo_codigo: e.target.value })}>
+              <option value="">Selecciona…</option>
+              {activos.map((a) => <option key={a.id} value={a.codigo}>{a.codigo}</option>)}
+            </select>
+          </Campo>
+          <Campo label="Tipo de trabajo" hint="Correctivo: por falla">
+            <select className={inputCls} value={f.tipo} onChange={(e) => setF({ ...f, tipo: e.target.value })}>
+              {["Correctivo", "Preventivo", "Inspección"].map((x) => <option key={x}>{x}</option>)}
+            </select>
+          </Campo>
+          <Campo label="Prioridad" hint="Urgencia de atención">
+            <select className={inputCls} value={f.prioridad} onChange={(e) => setF({ ...f, prioridad: e.target.value })}>
+              {["Urgente", "Alta", "Media", "Baja"].map((x) => <option key={x}>{x}</option>)}
+            </select>
+          </Campo>
+          <Campo label="Técnico" hint="Responsable">
+            <input className={inputCls} placeholder="Nombre" value={f.tecnico} onChange={(e) => setF({ ...f, tecnico: e.target.value })} />
+          </Campo>
+          <Campo label="Horas" hint="Duración estimada">
+            <input className={inputCls} type="number" min={0} step={0.5} placeholder="0" value={f.horas} onChange={(e) => setF({ ...f, horas: Number(e.target.value) })} />
+          </Campo>
+          <button onClick={crear} disabled={busy} className="h-[38px] rounded-sm bg-amber px-3 font-mono text-xs font-semibold uppercase text-base hover:bg-amber-deep disabled:opacity-50">Abrir OT</button>
+        </div>
       </div>
       <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
         {ordenes.map((o) => (
@@ -292,19 +338,24 @@ function Ordenes({ uid, activos, ordenes, refresh }: { uid: string; activos: Act
 // ----------------------------- INDICADORES -----------------------------
 function Indicadores({ kpi }: { kpi: ReturnType<typeof calcularKpi> }) {
   const cards = [
-    { etiqueta: "Disponibilidad", valor: kpi.disponibilidad, unidad: "%", tone: "text-ok" },
-    { etiqueta: "MTTR", valor: kpi.mttr, unidad: "h", tone: "text-amber" },
-    { etiqueta: "Cumplim. plan", valor: kpi.cumplimiento, unidad: "%", tone: "text-teal" },
-    { etiqueta: "OT abiertas", valor: kpi.abiertas, unidad: "", tone: "text-steel" },
+    { etiqueta: "Disponibilidad", valor: kpi.disponibilidad, unidad: "%", tone: "text-ok", desc: "% de activos en estado Operativo" },
+    { etiqueta: "MTTR", valor: kpi.mttr, unidad: "h", tone: "text-amber", desc: "Tiempo medio de reparación (correctivos cerrados)" },
+    { etiqueta: "Cumplim. plan", valor: kpi.cumplimiento, unidad: "%", tone: "text-teal", desc: "% de órdenes cerradas sobre el total" },
+    { etiqueta: "OT abiertas", valor: kpi.abiertas, unidad: "", tone: "text-steel", desc: "Órdenes aún sin cerrar" },
   ];
   return (
     <div>
       <p className="tag mb-4">Módulo · Tablero de indicadores (calculados con tus datos)</p>
+      <Aviso actividad="A3 · Indicadores de mantenimiento">
+        Estos <strong className="text-ink">indicadores (KPI)</strong> miden la salud del mantenimiento y se calculan solos con los activos y órdenes que registras.
+        Tu tarea es interpretarlos y proponer mejoras.
+      </Aviso>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {cards.map((k) => (
           <div key={k.etiqueta} className="panel p-5">
             <p className="tag">{k.etiqueta}</p>
             <p className={`mt-2 font-display text-3xl font-black ${k.tone}`}>{k.valor}<span className="ml-1 text-base text-ink-faint">{k.unidad}</span></p>
+            <p className="mt-1 text-xs leading-snug text-ink-faint">{k.desc}</p>
           </div>
         ))}
       </div>
@@ -320,6 +371,27 @@ function Mini({ label, value, tone }: { label: string; value: number; tone: stri
     <div className="rounded-sm border border-line bg-base p-2 text-center">
       <p className={`font-display text-xl font-black ${tone}`}>{value}</p>
       <p className="tag mt-1">{label}</p>
+    </div>
+  );
+}
+
+function Campo({ label, hint, children, className }: { label: string; hint?: string; children: React.ReactNode; className?: string }) {
+  return (
+    <label className={`flex flex-col gap-1 ${className ?? ""}`}>
+      <span className="tag text-ink-dim">{label}</span>
+      {children}
+      {hint && <span className="font-mono text-[0.62rem] text-ink-faint">{hint}</span>}
+    </label>
+  );
+}
+
+function Aviso({ actividad, children }: { actividad: string; children: React.ReactNode }) {
+  return (
+    <div className="mb-4 rounded-sm border border-steel/30 bg-steel/5 p-4">
+      <p className="mb-1 flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-steel">
+        <span className="led bg-steel text-steel" /> {actividad}
+      </p>
+      <p className="text-sm leading-relaxed text-ink-dim">{children}</p>
     </div>
   );
 }
